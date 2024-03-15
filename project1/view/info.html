@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 정보</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 400px;
+            margin: 50px auto;
+            position: relative;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .info-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        .info-table th,
+        .info-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        /* 뒤로가기 버튼 스타일 */
+        .back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgb(46, 46, 46);
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100px;
+            font-weight: bold;
+        }
+
+        /* 회원 탈퇴 버튼 스타일 */
+        .logout-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgb(46, 46, 46);
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 뒤로가기 버튼 -->
+        <button class="back-button" onclick="goBack()">뒤로가기</button>
+        <!-- 회원 탈퇴 버튼 -->
+        <button class="logout-button" onclick="remove()">회원 탈퇴</button>
+
+        <h2>내 정보</h2>
+        <table class="info-table">
+            <tr>
+                <th>항목</th>
+                <th>내용</th>
+            </tr>
+            <tr>
+                <td>이름</td>
+                <td id="username">{{username}}</td>
+            </tr>
+            <tr>
+                <td>이메일</td>
+                <td id="email">{{email}}</td>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        // 뒤로가기 함수
+        function goBack() {
+            window.history.back();
+        }
+
+        // 회원 탈퇴 확인 함수
+        function remove() {
+            if (confirm("정말로 회원 탈퇴하시겠습니까?")) {
+                var username = getCookie("login");
+                fetch('/delete/' + username, {
+                    method: 'delete', // DELETE 메서드로 탈퇴 요청을 보냅니다.
+                    credentials: 'same-origin' // 현재 도메인의 쿠키를 요청에 포함합니다.
+                }).then(response => {
+                    if (response.ok) {
+                        window.alert("탈퇴하였습니다.");
+                        // 탈퇴 성공 시에는 홈페이지로 리디렉션합니다.
+                        window.location.href = '/';
+                    } else {
+                        console.error('실패');
+                    }
+                }).catch(error => {
+                    console.error('네트워크 오류:', error);
+                });
+            }
+        }
+
+
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length === 2) 
+                return parts.pop().split(";").shift();
+            return null; // 해당 쿠키가 존재하지 않는 경우 null 반환
+        }
+    </script>
+</body>
+
+</html>
